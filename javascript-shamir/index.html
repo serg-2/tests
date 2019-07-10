@@ -1,0 +1,107 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<script src="./secrets.js" type="text/javascript" charset="utf-8"></script>
+<title>Друг Шамира</title>
+<style type="text/css">
+	#calculator * {font-size: 16px;}
+	#calculator table {border: solid 3px silver; border-spacing: 3px; background-color: #EEE; }
+	#calculator table td {border-spacing: 3px;}
+	input.display {width: 166px; text-align: right;}
+	td.buttons {border-top: solid 1px silver;}	
+	input[type= button] {width: 180px; height: 30px;}
+</style>
+</head>
+
+<body>
+<form name="calc" id="calculator">
+	<table>
+	<tr>
+        <td><CENTER><B>ENCODING</B></CENTER></td></tr><tr>
+	<td>
+Enter Coordinate for Shamir:
+        <input type="text" name="input_field" size="10" class="display">
+    </td>
+	</tr>
+	<tr>
+	<td class="buttons">
+        <input type="button" name="sha" value="ENCODE" OnClick="MegaFunc()">
+
+	</td>
+	</tr>
+    <tr>
+    <td>
+        <input type="text" name="output1" size="20" class="display">
+        <input type="text" name="output2" size="20" class="display">
+	<input type="text" name="output3" size="20" class="display">
+	<input type="text" name="output4" size="20" class="display">
+	<input type="text" name="output5" size="20" class="display">
+    </td>
+    </tr>
+</table><BR><table>
+        <tr>
+        <td><CENTER><B>DECODING</B></CENTER></td></tr>
+    <tr>
+    <td>
+        <input type="text" name="dec[0]" size="20" class="display" placeholder="First key here...">
+        <input type="text" name="dec[1]" size="20" class="display" placeholder="Second key here...">
+        <input type="text" name="dec[2]" size="20" class="display" placeholder="Third key here...">
+        <input type="text" name="dec[3]" size="20" class="display" placeholder="Fourth key here...">
+        <input type="text" name="dec[4]" size="20" class="display" placeholder="Fifth key here...">
+    </td>
+    </tr>
+    <tr>
+        <td class="buttons">
+        <input type="button" name="sha2" value="DECODE" OnClick="MegaFunc2()">
+        </td>
+    </tr>
+    <tr>
+    <td>
+        <textarea type="text" name="output_dec" rows="3" cols="70" class="display"></textarea>
+    </td>
+    </tr>
+    
+    </table>
+</form>
+</body>
+<script>function MegaFunc() {
+var target_string = calc.input_field.value;
+var target2_string = parseInt(target_string,10).toString(16);
+//console.log(target2_string);
+var list1 = secrets.share(target2_string, 5, 3);
+calc.output1.value = parseInt(list1[0].slice(3),16);
+calc.output2.value = parseInt(list1[1].slice(3),16);
+calc.output3.value = parseInt(list1[2].slice(3),16);
+calc.output4.value = parseInt(list1[3].slice(3),16);
+calc.output5.value = parseInt(list1[4].slice(3),16); 
+}
+
+function MegaFunc2() {
+
+console.log("first key element check:",calc.elements[7].value);
+var decode_list = [];
+var number_of_empty_fields = 0;
+for (i = 0; i<5 ;i++) {
+  if ( !isNaN(parseInt(calc.elements[i+7].value,10)) )
+    { 
+       decode_list.push("80" + (i+1).toString() + parseInt(calc.elements[i+7].value,10).toString(16)) ;
+    } else {
+       number_of_empty_fields++;
+    }            
+//   console.log(decode_list);
+}
+
+var result = parseInt(secrets.combine(decode_list),16);
+
+//console.log(result);
+//console.log(number_of_empty_fields);
+if (number_of_empty_fields > 5-3) {
+  result = "You should try to find " + (number_of_empty_fields-5+3).toString()+" MORE keys... Good Luck!" ;
+}
+
+calc.output_dec.value = result;
+}
+
+</script>
+</html>
+
